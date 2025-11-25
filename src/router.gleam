@@ -44,7 +44,7 @@ fn update(req: Request) -> Response {
       )
     })
   {
-    Ok(_) -> wisp.json_response("{\"status\":\"OK\"}", 200)
+    Ok(_) -> wisp.json_response("{\"status\":\"UPDATED\"}", 200)
     Error(err) -> {
       echo err
       wisp.internal_server_error()
