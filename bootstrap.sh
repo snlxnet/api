@@ -9,4 +9,4 @@ cd api
 rm manifest.toml # I know it's a hack
 
 gleam export erlang-shipment
-mprocs
+zellij --layout ./zellij.kdl
