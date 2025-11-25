@@ -15,6 +15,7 @@
             gleam
             erlang_28
             beamMinimal26Packages.rebar3
+            mprocs
           ];
         };
       }

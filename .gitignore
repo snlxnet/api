@@ -3,3 +3,4 @@
 .direnv
 /build
 erl_crash.dump
+mprocs.log

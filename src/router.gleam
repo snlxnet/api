@@ -1,4 +1,6 @@
-import gleam/http.{Get, Post}
+import gleam/http.{Get, Patch}
+import gleam/result
+import shellout
 import web
 import wisp.{type Request, type Response}
 
@@ -20,8 +22,32 @@ fn home_redirect(req: Request) -> Response {
   wisp.redirect("https://github.com/snlxnet/api")
 }
 
-fn update(_req: Request) -> Response {
-  echo "Update triggered"
-
-  wisp.html_response("OK", 200)
+fn update(req: Request) -> Response {
+  use <- wisp.require_method(req, Patch)
+  let pwd = "."
+  let _pull_ok = case
+    shellout.command(run: "git", with: ["pull"], in: pwd, opt: [])
+    |> result.try(fn(_) {
+      shellout.command(
+        run: "gleam",
+        with: ["export", "erlang-shipment"],
+        in: pwd,
+        opt: [],
+      )
+    })
+    |> result.try(fn(_) {
+      shellout.command(
+        run: "mprocs",
+        with: ["--ctl", "{ c: restart-proc }"],
+        in: pwd,
+        opt: [],
+      )
+    })
+  {
+    Ok(_) -> wisp.json_response("{\"status\":\"OK\"}", 200)
+    Error(err) -> {
+      echo err
+      wisp.internal_server_error()
+    }
+  }
 }
