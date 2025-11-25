@@ -6,7 +6,6 @@ apk add neovim zellij mprocs
 
 git clone https://github.com/snlxnet/api
 cd api
-rm manifest.toml # I know it's a hack
 
 gleam export erlang-shipment
 zellij --layout ./zellij.kdl
