@@ -160,4 +160,6 @@ function postStatus(query) {
   const status = JSON.stringify(currentStatus)
   statusSubscribers.forEach(socket => socket.send(status))
   logOk("Status sent")
+
+  return new Response("UPDATED")
 }
