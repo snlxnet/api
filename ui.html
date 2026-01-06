@@ -1,0 +1,21 @@
+<input id="pass" type="text" placeholder="api key">
+
+<h2>Upload</h2>
+<input id="fileid" type="text" placeholder="file id">
+<form id="upload" enctype="multipart/form-data">
+  <input name="file" type="file">
+  <button>Upload</button>
+</form>
+
+<script>
+  upload.addEventListener("submit", async (event) => {
+    event.preventDefault()
+    
+    const formData = new FormData(upload)
+    const response = await fetch(`/file?pass=${pass.value}&id=${fileid.value}`, {
+      method: "POST",
+      body: formData,
+    })
+  })
+</script>
+
