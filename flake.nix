@@ -11,7 +11,11 @@
       in
       {
         devShell = with pkgs; mkShell {
-          buildInputs = [ deno ];
+          buildInputs = [
+            deno
+            caddy
+            mprocs
+          ];
         };
       }
     );
