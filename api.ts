@@ -44,9 +44,6 @@ function handler(request) {
 }
 
 async function auth(query) {
-  return Promise.resolve()
-  console.log("WILDLY UNSAFE")
-
   if (query.get("pass") === API_KEY) {
     return Promise.resolve()
   } else {
