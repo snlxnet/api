@@ -23,6 +23,10 @@ function handler(request) {
 
   if (verb === "GET" && endpoint === "/") {
     return ui()
+  } else if (verb === "GET" && endpoint === "/favicon.svg") {
+    return svg("favicon.svg")
+  } else if (verb === "GET" && endpoint === "/banner.svg") {
+    return svg("banner.svg")
   } else if (verb === "GET" && endpoint === "/file") {
     return getFile(query)
   } else if (verb === "POST" && endpoint === "/file") {
@@ -58,6 +62,17 @@ async function ui() {
   return new Response(file.readable, {
     headers: {
       "Content-Type": "text/html",
+    },
+  })
+}
+
+async function svg(path) {
+  logOk("Returning the icon")
+
+  const file = await Deno.open(path, { read: true });
+  return new Response(file.readable, {
+    headers: {
+      "Content-Type": "image/svg+xml",
     },
   })
 }

@@ -1,11 +1,66 @@
-<input id="pass" type="text" placeholder="api key">
+<link rel="stylesheet" href="https://snlx.net/base.css">
+<link rel="stylesheet" href="https://snlx.net/forms.css">
+<link rel="stylesheet" href="https://snlx.net/garden.css">
+<link rel="stylesheet" href="https://snlx.net/theme-mocha.css">
+<style>
+  form, input {
+    width: 100%;
+  }
+  form {
+    padding: 1rem 0;
+  }
+  button {
+    font-size: inherit;
+  }
+  .button.accent {
+    background-color: #94e2d5;
+  }
+</style>
 
-<h2>Upload</h2>
-<input id="fileid" type="text" placeholder="file id">
-<form id="upload" enctype="multipart/form-data">
-  <input name="file" type="file">
-  <button>Upload</button>
-</form>
+<main class="content markdown">
+  <img src="banner.svg">
+
+  <p>
+    This page is for testing purposes only. If you are here for the code,
+    check out <a href="https://github.com/snlxnet/api">the repo</a>.
+
+    If you want a story, I'll post about it on my main site soon
+    and add a link.
+  </p>
+
+  <h2>Key</h2>
+  <input id="pass" type="text">
+
+  <h2>Upload</h2>
+  <label>
+    File name
+    <input id="fileid" type="text">
+  </label>
+  <form id="upload" enctype="multipart/form-data" style="flex-direction: row">
+    <label class="button">
+      <input name="file" type="file" style="display: none">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-open-icon lucide-folder-open"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>
+      Choose file
+    </label>
+    <button class="button accent">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload-icon lucide-upload"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+      Upload
+    </button>
+  </form>
+
+  <h2>Server management</h2>
+  <button id="upgrade" class="button">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-fading-arrow-up-icon lucide-circle-fading-arrow-up"><path d="M12 2a10 10 0 0 1 7.38 16.75"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/><path d="M2.5 8.875a10 10 0 0 0-.5 3"/><path d="M2.83 16a10 10 0 0 0 2.43 3.4"/><path d="M4.636 5.235a10 10 0 0 1 .891-.857"/><path d="M8.644 21.42a10 10 0 0 0 7.631-.38"/></svg>
+    Upgrade the server
+  </button>
+</main>
+
+<div class="sidebar">
+  <a href="/" class="logo-link">
+    <img class="logo" src="/favicon.svg">
+  </a>
+  <h2>api</h2>
+</div>
 
 <script>
   upload.addEventListener("submit", async (event) => {
@@ -16,6 +71,10 @@
       method: "POST",
       body: formData,
     })
+  })
+
+  upgrade.addEventListener("click", () => {
+    fetch(`/upgrade?pass=${pass.value}`)
   })
 </script>
 
