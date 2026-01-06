@@ -1,4 +1,0 @@
-server: 127.0.0.1:4050
-procs:
-  api:
-    shell: "build/erlang-shipment/entrypoint.sh run"

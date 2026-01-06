@@ -11,12 +11,7 @@
       in
       {
         devShell = with pkgs; mkShell {
-          buildInputs = [
-            gleam
-            erlang_28
-            beamMinimal26Packages.rebar3
-            mprocs
-          ];
+          buildInputs = [ deno ];
         };
       }
     );
