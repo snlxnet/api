@@ -23,6 +23,8 @@ function handler(request) {
 
   if (verb === "GET" && endpoint === "/") {
     return redirectToRepo()
+  } else if (verb === "GET" && endpoint === "/file") {
+    return getFile(query)
   } else if (verb === "GET" && endpoint === "/upgrade") {
     return auth(query).then(upgradeServer).catch(deny)
   } else {
@@ -67,5 +69,17 @@ async function upgradeServer() {
   console.error(new TextDecoder().decode(stderr))
 
   return new Response("done")
+}
+
+async function getFile(query) {
+  const id = "./" + query.get("id").replace("/", "-")
+  try {
+    const file = await Deno.open(id, { read: true });
+    logOk(`File sent ${id}`)
+    return new Response(file.readable)
+  } catch {
+    logErr(`File not found ${id}`)
+    return new Response("NOT FOUND", { status: 404 })
+  }
 }
 
