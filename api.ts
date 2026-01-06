@@ -5,6 +5,8 @@ logOk(`Generated a key: ${API_KEY}`)
 qrcode.generate(API_KEY)
 console.log("\t\t   You can scan it, why not")
 
+await Deno.mkdir("persist").catch(() => logOk(`Persist directory exists`))
+
 const statusSubscribers = new Set()
 const currentStatus = {
   started: new Date(),
@@ -100,7 +102,7 @@ async function upgradeServer() {
 }
 
 async function getFile(query) {
-  const id = "./" + query.get("id").replace("/", "-")
+  const id = "./persist/" + query.get("id").replace("/", "-")
   try {
     const file = await Deno.open(id, { read: true });
     logOk(`File sent ${id}`)
@@ -112,7 +114,7 @@ async function getFile(query) {
 }
 
 async function postFile(query, request) {
-  const id = "./" + query.get("id").replace("/", "-")
+  const id = "./persist/" + query.get("id").replace("/", "-")
   const formData: FormData = await request.formData();
   const file = formData?.get("file") as File;
 
