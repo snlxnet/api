@@ -1,5 +1,9 @@
+import qrcode from 'https://deno.land/x/qrcode_terminal/mod.js'
+
 const API_KEY = crypto.randomUUID()
 logOk(`Generated a key: ${API_KEY}`)
+qrcode.generate(API_KEY)
+console.log("\t\t   You can scan it, why not")
 Deno.serve({ port: 4242 }, handler)
 
 function logOk(message: string) {
