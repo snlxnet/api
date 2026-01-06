@@ -17,7 +17,9 @@ function handler(request) {
   const endpoint = url.pathname
   const query = url.searchParams
 
-  if (verb === "GET" && endpoint === "/upgrade") {
+  if (verb === "GET" && endpoint === "/") {
+    return redirectToRepo()
+  } else if (verb === "GET" && endpoint === "/upgrade") {
     return auth(query).then(upgradeServer).catch(deny)
   } else {
     return notFound()
@@ -39,6 +41,17 @@ async function auth(query) {
   } else {
     return Promise.reject()
   }
+}
+
+function redirectToRepo() {
+  logOk("Redirecting to the repo")
+
+  return new Response("Permanent Redirect", {
+    status: 308,
+    headers: {
+      "Location": "https://github.com/snlxnet/api"
+    }
+  })
 }
 
 function upgradeServer() {
