@@ -4,6 +4,13 @@ const API_KEY = crypto.randomUUID()
 logOk(`Generated a key: ${API_KEY}`)
 qrcode.generate(API_KEY)
 console.log("\t\t   You can scan it, why not")
+
+const statusSubscribers = new Set()
+const currentStatus = {
+  started: new Date(),
+  action: "online",
+}
+
 Deno.serve({ port: 4242 }, handler)
 
 function logOk(message: string) {
@@ -33,6 +40,10 @@ function handler(request) {
     return auth(query).then(() => postFile(query, request)).catch(deny)
   } else if (verb === "GET" && endpoint === "/upgrade") {
     return auth(query).then(upgradeServer).catch(deny)
+  } else if (verb === "GET" && endpoint === "/status") {
+    return getStatus(request)
+  } else if (verb === "POST" && endpoint === "/status") {
+    return auth(query).then(() => postStatus(query)).catch(deny)
   } else {
     return notFound()
   }
@@ -114,4 +125,39 @@ async function postFile(query, request) {
   const buf = await file.stream()
   await Deno.writeFile(id, buf)
   return new Response("RECEIVED")
+}
+
+function getStatus(request) {
+  if (request.headers.get("upgrade") !== "websocket") {
+    return new Response(JSON.stringify(currentStatus), {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+      },
+    });
+  }
+
+  const { socket, response } = Deno.upgradeWebSocket(request);
+  socket.addEventListener("open", () => {
+    statusSubscribers.add(socket)
+    socket.send(JSON.stringify(currentStatus))
+    logOk("Status sub")
+  })
+  socket.addEventListener("close", () => {
+    statusSubscribers.delete(socket)
+    logOk("Status unsub")
+  })
+
+  return response
+}
+
+function postStatus(query) {
+  currentStatus.started = new Date()
+  currentStatus.action = query.get("action")
+  currentStatus.link = query.get("link")
+  currentStatus.location = query.get("location")
+  currentStatus.duration = query.get("duration")
+
+  const status = JSON.stringify(currentStatus)
+  statusSubscribers.forEach(socket => socket.send(status))
+  logOk("Status sent")
 }
