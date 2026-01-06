@@ -58,8 +58,14 @@ function redirectToRepo() {
   })
 }
 
-function upgradeServer() {
+async function upgradeServer() {
   logOk("Upgrading the server...")
-  return new Response("not yet implemented")
+
+  const command = new Deno.Command("git", { args: ["pull"] });
+  const { stdout, stderr } = await command.output();
+  console.log(new TextDecoder().decode(stdout))
+  console.error(new TextDecoder().decode(stderr))
+
+  return new Response("done")
 }
 
