@@ -1,4 +1,5 @@
 (cors) {
+	@origin header Origin *
 	header @origin Access-Control-Allow-Origin *
 	header @origin Access-Control-Allow-Methods "OPTIONS,HEAD,GET,POST,PUT,PATCH,DELETE"
 }
