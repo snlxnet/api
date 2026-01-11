@@ -1,3 +1,10 @@
+(cors) {
+	@origin header Origin {args[0]}
+	header @origin Access-Control-Allow-Origin "{args[0]}"
+	header @origin Access-Control-Allow-Methods "OPTIONS,HEAD,GET,POST,PUT,PATCH,DELETE"
+}
+
 api.snlx.net {
+	import cors example.com
 	reverse_proxy localhost:4242
 }
