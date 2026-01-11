@@ -1,4 +1,5 @@
 import qrcode from 'https://deno.land/x/qrcode_terminal/mod.js'
+import { extractYaml, test } from "jsr:@std/front-matter"
 
 const API_KEY = crypto.randomUUID()
 logOk(`Generated a key: ${API_KEY}`)
@@ -36,6 +37,8 @@ function handler(request) {
     return svg("favicon.svg")
   } else if (verb === "GET" && endpoint === "/banner.svg") {
     return svg("banner.svg")
+  } else if (verb === "GET" && endpoint === "/find") {
+    return getOrFindFile(query)
   } else if (verb === "GET" && endpoint === "/file") {
     return getFile(query)
   } else if (verb === "POST" && endpoint === "/file") {
@@ -111,6 +114,63 @@ async function getFile(query) {
     logErr(`File not found ${id}`)
     return new Response("NOT FOUND", { status: 404 })
   }
+}
+
+async function getOrFindFile(query) {
+  const id = "./persist/" + query.get("name").replace("/", "-")
+  try {
+    const file = await Deno.open(id, { read: true });
+    logOk(`File sent ${id}`)
+    return new Response(file.readable)
+  } catch {
+    return findFile(query)
+  }
+}
+
+async function findFile(query) {
+  const requested = query.get("name").split("/").at(-1) + ".md"
+  const allowedRoots = query.get("among").replace("/", ",").split(",")
+  
+  let allowedLinks = allowedRoots.map(async (rootNote) => {
+    const text = await Deno.readTextFile("./persist/" + rootNote)
+    const frontmatter = extractYaml(text)
+    const rootName = frontmatter.attrs.name
+
+		const leafNotes = text.matchAll(/\[.+?]\((.+?)\)/gm)
+  		.map(([_match, captureGroup]) => captureGroup)
+  		.filter(link => link.startsWith("/"))
+  		.map(file => file.slice(1) + ".md")
+
+    return [rootName, ...leafNotes]
+  })
+  allowedLinks = (await Promise.all(allowedLinks)).flat() 
+  allowedLinks = [...new Set(allowedLinks)]
+
+  let allowedFiles = []
+  for await (let file of Deno.readDir("./persist")) {
+    const id = file.name
+    if (!file.isFile) continue;
+
+    const text = Deno.readTextFileSync("./persist/" + file.name)
+    if (!test(text)) continue;
+    const frontmatter = extractYaml(text)
+    const name = frontmatter.attrs.name
+    if (allowedLinks.includes(id) || allowedLinks.includes(name)) {
+      allowedFiles.push({ id, name })
+    }
+  }
+
+  logOk(`Looking for ${requested} in ${JSON.stringify(allowedRoots)} & children`)
+  const match = allowedFiles.find(file => file.name === requested)?.id
+
+  if (!match) {
+    logErr(`Find failed`)
+    return new Response("NOT FOUND", { status: 404 })
+  }
+
+  logOk(`Found ${match}`)
+  const file = await Deno.open("./persist/" + match, { read: true });
+  return new Response(file.readable)
 }
 
 async function postFile(query, request) {
