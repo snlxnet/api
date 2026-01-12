@@ -107,7 +107,7 @@ async function upgradeServer() {
 async function getFile(query) {
   const id = "./persist/" + query.get("id").replace("/", "-")
   try {
-    const params = id.endsWith(".svg") ? { "Content-Type": "image/svg+xml" } : {}
+    const params = id.endsWith(".svg") ? { headers: { "Content-Type": "image/svg+xml" } } : {}
     const file = await Deno.open(id, { read: true });
     logOk(`File sent ${id}`)
     return new Response(file.readable, params)
@@ -120,7 +120,7 @@ async function getFile(query) {
 async function getOrFindFile(query) {
   const id = "./persist/" + query.get("name").replace("/", "-")
   try {
-    const parmas = id.endsWith(".svg") ? { "Content-Type": "image/svg+xml" } : {}
+    const params = id.endsWith(".svg") ? { headers: { "Content-Type": "image/svg+xml" } } : {}
     const file = await Deno.open(id, { read: true });
     logOk(`File sent ${id}`)
     return new Response(file.readable, params)
