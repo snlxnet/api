@@ -107,9 +107,10 @@ async function upgradeServer() {
 async function getFile(query) {
   const id = "./persist/" + query.get("id").replace("/", "-")
   try {
+    const params = id.endsWith(".svg") ? { "Content-Type": "image/svg+xml" } : {}
     const file = await Deno.open(id, { read: true });
     logOk(`File sent ${id}`)
-    return new Response(file.readable)
+    return new Response(file.readable, params)
   } catch {
     logErr(`File not found ${id}`)
     return new Response("NOT FOUND", { status: 404 })
@@ -119,9 +120,10 @@ async function getFile(query) {
 async function getOrFindFile(query) {
   const id = "./persist/" + query.get("name").replace("/", "-")
   try {
+    const parmas = id.endsWith(".svg") ? { "Content-Type": "image/svg+xml" } : {}
     const file = await Deno.open(id, { read: true });
     logOk(`File sent ${id}`)
-    return new Response(file.readable)
+    return new Response(file.readable, params)
   } catch {
     return findFile(query)
   }
