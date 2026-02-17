@@ -111,13 +111,15 @@ async function getFile(query) {
     return new Response("Nice try :)", { status: 403 });
   }
 
+  const isImage = id.endsWith(".svg")
+
   const access = JSON.parse(await Deno.readTextFile("./persist/access.json"));
   const accessible = Object.entries(access).filter(([k, _v]) =>
     keys.includes(k)
   ).flatMap(([_k, v]) => v).map((file) => "./persist/" + file);
-  if (!accessible.includes(id)) {
+  if (!accessible.includes(id) && !isImage) {
     logErr(`Rejected ${id} to ${keys}`);
-    return new Response("Not Found", { status: 404 });
+    return new Response("Nope!", { status: 403 });
   }
 
   try {
@@ -129,7 +131,7 @@ async function getFile(query) {
     return new Response(file.readable, params);
   } catch {
     logErr(`File not found ${id}`);
-    return new Response("NOT FOUND", { status: 404 });
+    return new Response("I don't have that file", { status: 404 });
   }
 }
 
