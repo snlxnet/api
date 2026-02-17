@@ -68,11 +68,13 @@ async function auth(query) {
 
 async function home({ request, url }) {
   logOk("Greeting someone, request info:");
-  console.log(request, url)
+  console.log(request, url);
 
   const command = new Deno.Command("uptime");
   const { stdout } = await command.output();
-  const uptime = new TextDecoder().decode(stdout).split("users")[0].split(",")[0].trim();
+  const uptime = new TextDecoder().decode(stdout).split("users")[0].split(
+    ",",
+  )[0].trim();
 
   return new Response(`Hi! I store secret notes for the main site
 
@@ -111,7 +113,8 @@ async function getFile(query) {
     return new Response("Nice try :)", { status: 403 });
   }
 
-  const isImage = id.endsWith(".svg")
+  const isImage = [".jpg", ".png", ".svg"].includes(id.slice(-4)) ||
+    [".jpeg", ".webp"].includes(id.slice(-5));
 
   const access = JSON.parse(await Deno.readTextFile("./persist/access.json"));
   const accessible = Object.entries(access).filter(([k, _v]) =>
