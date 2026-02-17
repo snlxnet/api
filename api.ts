@@ -31,11 +31,7 @@ function handler(request) {
   const query = url.searchParams;
 
   if (verb === "GET" && endpoint === "/") {
-    return ui();
-  } else if (verb === "GET" && endpoint === "/favicon.svg") {
-    return svg("favicon.svg");
-  } else if (verb === "GET" && endpoint === "/banner.svg") {
-    return svg("banner.svg");
+    return home({ request, url });
   } else if (verb === "GET" && endpoint === "/file") {
     return getFile(query);
   } else if (verb === "POST" && endpoint === "/file") {
@@ -70,15 +66,19 @@ async function auth(query) {
   }
 }
 
-async function ui() {
-  logOk("Returning the UI");
+async function home({ request, url }) {
+  logOk("Greeting someone, request info:");
+  console.log(request, url)
 
-  const file = await Deno.open("./ui.html", { read: true });
-  return new Response(file.readable, {
-    headers: {
-      "Content-Type": "text/html",
-    },
-  });
+  const command = new Deno.Command("uptime");
+  const { stdout } = await command.output();
+  const uptime = new TextDecoder().decode(stdout).split("users")[0].split(",")[0].trim();
+
+  return new Response(`Hi! I store secret notes for the main site
+
+Code: https://snlx.net/api-src
+About: https://snlx.net/mk-api
+Uptime: ${uptime}`);
 }
 
 async function svg(path) {
