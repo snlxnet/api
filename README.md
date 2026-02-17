@@ -1,6 +1,6 @@
 # snlx.net API
 
-[![demo ui](banner.svg)](https://api.snlx.net)
+https://api.snlx.net
 
 This project
 - stores the current status [for the homepage](https://snlx.net/) (well, I didn't put it there yet)
