@@ -59,7 +59,6 @@ function handler(request) {
 }
 
 async function auth(query) {
-  return Promise.resolve();
   if (query.get("pass") === API_KEY) {
     return Promise.resolve();
   } else {
