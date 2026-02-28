@@ -178,15 +178,18 @@ function getStatus(request) {
 }
 
 function postStatus(query) {
-  currentStatus.started = new Date();
   currentStatus.action = query.get("action");
   currentStatus.link = query.get("link");
   currentStatus.location = query.get("location");
-  currentStatus.duration = query.get("duration");
+  const newDuration = decodeURIComponent(query.get("duration"));
+  if (newDuration !== "+pomo" || currentStatus.duration !== "+pomo") {
+    currentStatus.started = new Date();
+  }
+  currentStatus.duration = newDuration;
 
   const status = JSON.stringify(currentStatus);
   statusSubscribers.forEach((socket) => socket.send(status));
-  logOk("Status sent");
+  logOk("Status sent", query);
 
   return new Response("UPDATED");
 }
