@@ -3,6 +3,8 @@
 https://api.snlx.net
 
 This project
-- stores the current status [for the homepage](https://snlx.net/) (well, I didn't put it there yet)
+
+- stores the current status [for the now page](https://snlx.net/now)
 - manages secret notes for [the site](https://snlx.net/mk-secret)
 
+And is a part of the [winter workflow improvements](https://snlx.net/winterwi)
