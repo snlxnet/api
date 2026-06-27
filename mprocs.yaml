@@ -1,5 +1,5 @@
 procs:
   api: "deno run --allow-net --allow-run --allow-read --allow-write --watch api.ts"
-  peer: "deno x peer --port 9000"
+  peer: "deno x peer --port 9000 --proxied"
   turn: "turnserver --static-auth-secret hunter2"
   proxy: "caddy run"
